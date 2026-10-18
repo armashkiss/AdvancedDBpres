@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090c11">
+  <meta name="description" content="Advanced JSONB Querying in PostgreSQL — an interactive 9-minute presentation with executable SQL examples and a browser query simulator.">
+  <meta property="og:title" content="JSONB / Beyond the Rows">
+  <meta property="og:description" content="An immersive, interactive technical presentation on PostgreSQL JSONB.">
+  <meta property="og:type" content="website">
+  <title>JSONB — Beyond the Rows | PostgreSQL</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#1" aria-label="Go to title slide"><span class="brand-mark"><i></i><i></i><i></i></span><span>PG<span class="brand-slash">/</span>LAB</span></a>
+      <div class="header-center">DATABASE SYSTEMS <span class="dot-sep">•</span> RESEARCH PRESENTATION <span class="dot-sep">•</span> 2026</div>
+      <div class="top-actions"><span class="time-pill"><span class="live-dot"></span> ~ 9 MIN</span><button type="button" class="icon-btn" id="overviewBtn" title="Slide overview (G)" aria-label="Open slide overview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button><button type="button" class="icon-btn" id="fullscreenBtn" title="Fullscreen (F)" aria-label="Toggle fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg></button></div>
+    </header>
+
+    <main id="presentation" aria-label="JSONB presentation">
+      <!-- 01 -->
+      <section class="slide slide-cover active" data-title="The big idea" data-duration="35" aria-label="Slide 1: The big idea">
+        <div class="cover-corner" aria-hidden="true">01 / 15<br>DATABASES<br>REIMAGINED</div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> AN ADVANCED POSTGRESQL FIELD GUIDE</p>
+            <h1 class="cover-title">BEYOND<br>THE <span class="gradient-word">ROWS<span class="period">.</span></span></h1>
+            <p class="cover-subtitle">Advanced <strong>JSONB querying</strong> in PostgreSQL.<br>From nested documents to meaningful insights.</p>
+            <div class="cover-bottom"><span class="pill pill-lime">SQL × JSON × PERFORMANCE</span><span class="thin-label">PRESS <kbd>→</kbd> TO EXPLORE</span></div>
+          </div>
+          <div class="hero-art" aria-hidden="true"><div class="art-orbit orbit-a"></div><div class="art-orbit orbit-b"></div><div class="art-orbit orbit-c"></div><div class="art-core"><span>{</span><strong>JSON<b>B</b></strong><span>}</span></div><div class="art-float float-a">{ "indexed": true }</div><div class="art-float float-b">@&gt; &nbsp; #&gt;&gt; &nbsp; @?</div><div class="art-coordinate">51° 30′ 26.4″ N<br>00° 07′ 39.6″ W</div></div>
+        </div>
+        <div class="cover-footer"><span>POSTGRESQL / JSONB</span><span>THE RELATIONAL × DOCUMENT PARADIGM</span></div>
+      </section>
+
+      <!-- 02 -->
+      <section class="slide" data-title="The data problem" data-duration="32" aria-label="Slide 2: The data problem">
+        <div class="slide-meta"><span class="section-num">01 — CONTEXT</span><span class="chapter-label">THE PROBLEM</span></div>
+        <h2 class="display-title">Real-world data<br><em>doesn't fit in neat boxes.</em></h2>
+        <div class="challenge-grid">
+          <div class="challenge-card"><span class="card-index">01 / VARIATION</span><div class="challenge-icon">{ }</div><h3>Different structures</h3><p>Laptops have RAM. Headsets have wireless features. Their attributes are not identical.</p></div>
+          <div class="challenge-card"><span class="card-index">02 / EVOLUTION</span><div class="challenge-icon">↗</div><h3>Changing requirements</h3><p>New properties arrive without needing a new column for every product feature.</p></div>
+          <div class="challenge-card"><span class="card-index">03 / INSIGHT</span><div class="challenge-icon">⌕</div><h3>Searchable flexibility</h3><p>We still need filters, aggregations, and indexes — not just a place to store JSON.</p></div>
+        </div>
+        <div class="takeaway"><span class="takeaway-led"></span><strong>The question:</strong> How do we keep flexible documents queryable with SQL?</div>
+      </section>
+
+      <!-- 03 -->
+      <section class="slide" data-title="JSON vs JSONB" data-duration="33" aria-label="Slide 3: JSON vs JSONB">
+        <div class="slide-meta"><span class="section-num">02 — FOUNDATION</span><span class="chapter-label">CHOOSE YOUR TYPE</span></div>
+        <h2 class="display-title">Same JSON syntax.<br><em>Different superpowers.</em></h2>
+        <div class="compare-layout">
+          <article class="compare-card muted-card"><div class="compare-top"><span class="compare-icon">{ }</span><h3>JSON</h3><span class="micro-label">TEXT REPRESENTATION</span></div><ul class="feature-list"><li>Preserves input text and whitespace</li><li>Preserves object key order</li><li>Reparses for processing</li><li>Useful when input fidelity matters</li></ul></article>
+          <div class="compare-vs">VS</div>
+          <article class="compare-card selected-card"><div class="compare-top"><span class="compare-icon highlight-icon">{ B }</span><h3>JSONB</h3><span class="tag-lime">OUR FOCUS</span></div><ul class="feature-list"><li>Stored in decomposed binary form</li><li>Supports indexing and containment</li><li>Does not preserve key order / duplicates</li><li>Usually preferable for querying</li></ul></article>
+        </div>
+        <p class="slide-footnote">Both types validate JSON. JSONB has processing and indexing benefits, with conversion overhead at input.</p>
+      </section>
+
+      <!-- 04 -->
+      <section class="slide" data-title="One dataset, many queries" data-duration="37" aria-label="Slide 4: One dataset, many queries">
+        <div class="slide-meta"><span class="section-num">03 — OUR DATASET</span><span class="chapter-label">A MINI E-COMMERCE CATALOG</span></div>
+        <h2 class="display-title">One table.<br><em>Many different shapes.</em></h2>
+        <div class="data-layout">
+          <div class="terminal schema-terminal"><div class="terminal-head"><div class="window-dots"><b></b><b></b><b></b></div><span>01_schema.sql</span><span class="terminal-type">SQL</span></div><pre><code class="language-sql">CREATE TABLE catalog (
+  id   BIGSERIAL PRIMARY KEY,
+  data JSONB NOT NULL
+);
+
+INSERT INTO catalog (data) VALUES
+  ('{"name":"Atlas Pro 14",
+     "category":"laptop",
+     "price":1299,
+     "specs":{"ram":16},
+     "tags":["portable","premium"]}');</code></pre><div class="terminal-bottom"><span class="term-status-dot"></span> PostgreSQL-compatible SQL</div></div>
+          <div class="record-stack"><div class="record-label"><span>EXAMPLE ROWS</span><span>06 RECORDS</span></div><div class="record-item"><span class="record-number">01</span><div><strong>Atlas Pro 14</strong><small>Laptop / 16 GB RAM</small></div><span class="price">$1,299</span></div><div class="record-item"><span class="record-number">02</span><div><strong>Nova Air</strong><small>Laptop / 8 GB RAM</small></div><span class="price">$899</span></div><div class="record-item"><span class="record-number">03</span><div><strong>Pulse X</strong><small>Headset / wireless</small></div><span class="price">$149</span></div><div class="record-item"><span class="record-number">04</span><div><strong>Forge 16</strong><small>Laptop / 32 GB RAM</small></div><span class="price">$1,699</span></div><div class="record-item"><span class="record-number">05</span><div><strong>Orbit Key</strong><small>Keyboard / mechanical</small></div><span class="price">$99</span></div><div class="record-item"><span class="record-number">06</span><div><strong>Wave Mini</strong><small>Headset / wireless</small></div><span class="price">$79</span></div></div>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="slide" data-title="Operator toolkit" data-duration="32" aria-label="Slide 5: Operator toolkit">
+        <div class="slide-meta"><span class="section-num">04 — OPERATORS</span><span class="chapter-label">A SMALL ALPHABET / A LOT OF POWER</span></div>
+        <h2 class="display-title">Meet your <em>query toolkit.</em></h2>
+        <div class="operator-grid">
+          <div class="operator-card"><div class="operator-glyph">-&gt;</div><h3>Get JSON</h3><p>Keep the JSON/JSONB type.</p><code>data -&gt; 'specs'</code></div>
+          <div class="operator-card"><div class="operator-glyph">-&gt;&gt;</div><h3>Get text</h3><p>Extract a scalar as text.</p><code>data -&gt;&gt; 'name'</code></div>
+          <div class="operator-card"><div class="operator-glyph">@&gt;</div><h3>Contains</h3><p>Check document containment.</p><code>data @&gt; '{...}'</code></div>
+          <div class="operator-card"><div class="operator-glyph">?</div><h3>Key exists</h3><p>Top-level key or string array element.</p><code>data ? 'specs'</code></div>
+          <div class="operator-card secondary"><div class="operator-glyph">#&gt;&gt;</div><h3>Path to text</h3><p>Reach deeply nested values.</p><code>data #&gt;&gt; '{specs,ram}'</code></div>
+          <div class="operator-card secondary"><div class="operator-glyph">@?</div><h3>JSONPath exists</h3><p>Match complex nested paths.</p><code>data @? '$.tags[*]...'</code></div>
+        </div>
+      </section>
+
+      <!-- 06 -->
+      <section class="slide" data-title="Extract with precision" data-duration="35" aria-label="Slide 6: Extract with precision">
+        <div class="slide-meta"><span class="section-num">05 — EXTRACTION</span><span class="chapter-label">FOLLOW THE PATH</span></div>
+        <h2 class="display-title">Go deep.<br><em>Keep your types straight.</em></h2>
+        <div class="extraction-layout">
+          <div class="json-tree"><div class="tree-header">DATA / ATLAS PRO 14 <span>JSONB</span></div><div class="tree-line level0">{</div><div class="tree-line level1"><span class="j-key">"name"</span>: <span class="j-string">"Atlas Pro 14"</span>,</div><div class="tree-line level1"><span class="j-key">"specs"</span>: <span>{</span></div><div class="tree-line level2 focus-line"><span class="j-key">"ram"</span>: <span class="j-number">16</span></div><div class="tree-line level1">},</div><div class="tree-line level1"><span class="j-key">"price"</span>: <span class="j-number">1299</span></div><div class="tree-line level0">}</div><div class="tree-marker">TARGET: specs → ram</div></div>
+          <div class="extraction-steps"><div class="extract-step"><span class="extract-label">STEP 01 / JSON VALUE</span><code>data -&gt; 'specs' -&gt; 'ram'</code><div class="output-row"><span>RETURNS</span><strong>16</strong><span class="datatype">jsonb</span></div></div><div class="extract-step"><span class="extract-label">STEP 02 / TEXT VALUE</span><code>data #&gt;&gt; '{specs,ram}'</code><div class="output-row"><span>RETURNS</span><strong>"16"</strong><span class="datatype">text</span></div></div><div class="extract-step"><span class="extract-label">STEP 03 / NUMERIC COMPARISON</span><code>(data #&gt;&gt; '{specs,ram}')::int &gt;= 16</code><div class="output-row"><span>RETURNS</span><strong>true</strong><span class="datatype">boolean</span></div></div></div>
+        </div>
+        <div class="inline-warning"><strong>Remember:</strong> Missing paths typically return SQL NULL. Cast extracted text before numeric comparisons.</div>
+      </section>
+
+      <!-- 07 -->
+      <section class="slide" data-title="Filter documents" data-duration="37" aria-label="Slide 7: Filter documents">
+        <div class="slide-meta"><span class="section-num">06 — FILTERING</span><span class="chapter-label">CONTAINMENT / EXISTENCE</span></div>
+        <h2 class="display-title">Find the signal<br><em>inside the document.</em></h2>
+        <div class="filter-compare"><div class="filter-panel"><div class="filter-panel-head"><span class="op-bubble">@&gt;</span><span>JSONB CONTAINMENT</span></div><pre><code class="language-sql">SELECT data -&gt;&gt; 'name' AS product
+FROM catalog
+WHERE data @&gt;
+  '{"category":"laptop"}'::jsonb;</code></pre><div class="query-output"><span>3 MATCHES</span><div class="chipset"><span>Atlas Pro 14</span><span>Nova Air</span><span>Forge 16</span></div></div></div><div class="filter-panel"><div class="filter-panel-head"><span class="op-bubble">?</span><span>KEY EXISTENCE</span></div><pre><code class="language-sql">SELECT data -&gt;&gt; 'name' AS product
+FROM catalog
+WHERE data ? 'specs';</code></pre><div class="query-output"><span>3 MATCHES</span><div class="chipset"><span>Atlas Pro 14</span><span>Nova Air</span><span>Forge 16</span></div></div></div></div>
+        <p class="highlight-caption">Containment matches structure and values. The <code>?</code> operator checks only the <strong>top level</strong>.</p>
+      </section>
+
+      <!-- 08 -->
+      <section class="slide slide-lab" data-title="Interactive SQL lab" data-duration="65" aria-label="Slide 8: Interactive SQL lab">
+        <div class="slide-meta"><span class="section-num">07 — INTERACTIVE LAB</span><span class="chapter-label"><span class="lab-pulse"></span> BROWSER SIMULATION / NO SERVER REQUIRED</span></div>
+        <h2 class="display-title">You set the rules.<br><em>SQL finds the rows.</em></h2>
+        <div class="lab-workspace"><div class="lab-controls"><div class="control-heading"><span>QUERY BUILDER</span><span class="green-signal">● LIVE</span></div><label class="field-label" for="categorySelect">PRODUCT CATEGORY</label><div class="select-wrap"><select id="categorySelect"><option value="all">All products</option><option value="laptop">Laptops</option><option value="headset">Headsets</option><option value="keyboard">Keyboards</option></select></div><label class="field-label" for="ramSelect">MINIMUM RAM</label><div class="select-wrap"><select id="ramSelect"><option value="0">Any amount</option><option value="8">8 GB or more</option><option value="16">16 GB or more</option><option value="32">32 GB or more</option></select></div><div class="range-head"><label class="field-label" for="priceRange">MAX PRICE</label><strong id="priceValue">$2,000</strong></div><input id="priceRange" type="range" min="100" max="2000" step="50" value="2000"><div class="range-ends"><span>$100</span><span>$2,000</span></div><button id="resetFilters" type="button" class="reset-btn">↺ RESET FILTERS</button></div><div class="lab-right"><div class="terminal lab-terminal"><div class="terminal-head"><div class="window-dots"><b></b><b></b><b></b></div><span>query_builder.sql</span><button type="button" id="copyQuery" class="copy-btn">COPY SQL ↗</button></div><pre><code id="generatedSql" class="language-sql"></code></pre></div><div class="results-box"><div class="results-head"><span>QUERY RESULT</span><span id="resultCount">6 ROWS</span></div><div class="results-table"><div class="results-row column-titles"><span>ID</span><span>PRODUCT</span><span>CATEGORY</span><span>PRICE</span></div><div id="queryResults"></div></div></div></div></div>
+        <div class="lab-disclaimer">A deterministic teaching simulator running on six in-browser records. Generated SQL can be executed on a PostgreSQL database seeded with <a href="sample-data.sql" download>sample-data.sql</a>.</div>
+      </section>
+
+      <!-- 09 -->
+      <section class="slide" data-title="JSONPath" data-duration="40" aria-label="Slide 9: JSONPath">
+        <div class="slide-meta"><span class="section-num">08 — ADVANCED SEARCH</span><span class="chapter-label">SQL / JSON PATH</span></div>
+        <h2 class="display-title">When a key isn't enough,<br><em>follow a pattern.</em></h2>
+        <div class="path-grid"><div class="path-example"><span class="path-number">01</span><span class="path-tag">@? / PATH EXISTS</span><h3>Find products tagged <em>gaming</em></h3><pre><code class="language-sql">SELECT data -&gt;&gt; 'name'
+FROM catalog
+WHERE data @?
+  '$.tags[*] ? (@ == "gaming")';</code></pre><div class="path-result">RESULT <strong>Pulse X · Forge 16</strong></div></div><div class="path-example"><span class="path-number">02</span><span class="path-tag">@@ / PREDICATE CHECK</span><h3>Find products above <em>$1,000</em></h3><pre><code class="language-sql">SELECT data -&gt;&gt; 'name'
+FROM catalog
+WHERE data @@ '$.price &gt; 1000';</code></pre><div class="path-result">RESULT <strong>Atlas Pro 14 · Forge 16</strong></div></div></div><div class="path-callout"><div class="callout-icon">✳</div><div><strong>Why it matters:</strong> JSONPath can filter inside arrays and traverse irregular documents. <code>@?</code> asks whether a path yields a match; <code>@@</code> evaluates a predicate.</div></div>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide" data-title="Unnest and aggregate" data-duration="37" aria-label="Slide 10: Unnest and aggregate">
+        <div class="slide-meta"><span class="section-num">09 — ANALYTICS</span><span class="chapter-label">TURN ARRAYS INTO ROWS</span></div>
+        <h2 class="display-title">JSON arrays → <em>SQL insight.</em></h2>
+        <div class="analytics-layout"><div class="terminal analytics-code"><div class="terminal-head"><div class="window-dots"><b></b><b></b><b></b></div><span>top_tags.sql</span><span class="terminal-type">SQL</span></div><pre><code class="language-sql">SELECT tag, COUNT(*) AS uses
+FROM catalog c
+CROSS JOIN LATERAL
+  jsonb_array_elements_text(
+    c.data -&gt; 'tags'
+  ) AS tag
+GROUP BY tag
+ORDER BY uses DESC, tag;</code></pre><div class="terminal-bottom">Set-returning function + aggregation</div></div><div class="chart-panel"><span class="chart-caption">MOST COMMON TAGS <b>DEMO DATA</b></span><div class="bar-row"><span>gaming</span><div class="bar-track"><i style="--bar:.99"></i></div><strong>2</strong></div><div class="bar-row"><span>premium</span><div class="bar-track"><i style="--bar:.99"></i></div><strong>2</strong></div><div class="bar-row"><span>wireless</span><div class="bar-track"><i style="--bar:.99"></i></div><strong>2</strong></div><div class="bar-row"><span>portable</span><div class="bar-track"><i style="--bar:.5"></i></div><strong>1</strong></div><div class="bar-row"><span>student</span><div class="bar-track"><i style="--bar:.5"></i></div><strong>1</strong></div><div class="chart-footer">From heterogeneous documents to consistent reporting.</div></div></div>
+      </section>
+
+      <!-- 11 -->
+      <section class="slide" data-title="Index the right way" data-duration="43" aria-label="Slide 11: Index the right way">
+        <div class="slide-meta"><span class="section-num">10 — PERFORMANCE</span><span class="chapter-label">INDEXING STRATEGY</span></div>
+        <h2 class="display-title">Flexible shouldn't mean<br><em>impossible to scale.</em></h2>
+        <div class="index-grid"><div class="index-card"><span class="index-number">A / GENERAL PURPOSE</span><h3>GIN <small>jsonb_ops</small></h3><pre><code class="language-sql">CREATE INDEX cat_gin
+ON catalog USING GIN (data);</code></pre><p>Supports <code>@&gt;</code>, <code>?</code>, <code>?|</code>, <code>?&amp;</code> and JSONPath search operators.</p></div><div class="index-card featured-index"><span class="index-number">B / CONTAINMENT OPTIMIZED</span><h3>GIN <small>jsonb_path_ops</small></h3><pre><code class="language-sql">CREATE INDEX cat_path
+ON catalog USING GIN
+  (data jsonb_path_ops);</code></pre><p>Focused on <code>@&gt;</code>, <code>@?</code>, <code>@@</code> — not key existence <code>?</code>.</p></div><div class="index-card"><span class="index-number">C / SCALAR FILTERING</span><h3>B-tree <small>expression index</small></h3><pre><code class="language-sql">CREATE INDEX cat_price
+ON catalog
+  (((data-&gt;&gt;'price')::numeric));</code></pre><p>Useful for ordered numeric comparisons on extracted scalar values.</p></div></div><p class="index-footnote">Index selection depends on predicates, data distribution, planner estimates, and write/storage costs.</p>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" data-title="Ask the query planner" data-duration="36" aria-label="Slide 12: Ask the query planner">
+        <div class="slide-meta"><span class="section-num">11 — PERFORMANCE VALIDATION</span><span class="chapter-label">TRUST THE PLAN, NOT THE GUESS</span></div>
+        <h2 class="display-title">Don't assume it's fast.<br><em>Measure it.</em></h2>
+        <div class="plan-layout"><div class="terminal plan-terminal"><div class="terminal-head"><div class="window-dots"><b></b><b></b><b></b></div><span>explain.sql</span><span class="terminal-type">SQL</span></div><pre><code class="language-sql">EXPLAIN (ANALYZE, BUFFERS)
+SELECT id
+FROM catalog
+WHERE data @&gt;
+  '{"category":"laptop"}';</code></pre><div class="terminal-bottom"><span class="term-status-dot"></span> Run on real data for real measurements</div></div><div class="plan-concept"><span class="concept-head">WHAT TO LOOK FOR</span><div class="flow-node scan-node"><span class="node-icon">▤</span><div><strong>Seq Scan</strong><small>May be cheapest on small tables</small></div></div><div class="flow-connector"><span>OR</span></div><div class="flow-node index-node"><span class="node-icon">◇</span><div><strong>Bitmap Index Scan</strong><small>Can use a suitable GIN index</small></div></div><div class="measure-row"><span>BUFFERS</span><span>ACTUAL TIME</span><span>ROWS</span></div></div></div><p class="slide-footnote">These are illustrative plan shapes, not measured results. PostgreSQL chooses the plan based on estimated cost.</p>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide" data-title="Four production pitfalls" data-duration="35" aria-label="Slide 13: Four production pitfalls">
+        <div class="slide-meta"><span class="section-num">12 — GOOD ENGINEERING</span><span class="chapter-label">THINK BEFORE YOU QUERY</span></div>
+        <h2 class="display-title">Four pitfalls.<br><em>Zero excuses.</em></h2>
+        <div class="pitfalls-grid"><div class="pitfall"><span class="pitfall-no">01</span><div><h3>Text ≠ number</h3><p><code>-&gt;&gt;</code> returns text. Use an explicit safe cast when comparing quantities.</p></div><span class="pitfall-symbol">≠</span></div><div class="pitfall"><span class="pitfall-no">02</span><div><h3>Existence is not recursive</h3><p><code>?</code> searches top-level keys/array elements. For deep search, navigate or use JSONPath.</p></div><span class="pitfall-symbol">⌄</span></div><div class="pitfall"><span class="pitfall-no">03</span><div><h3>Indexes have a cost</h3><p>GIN helps reads, but consumes storage and adds write maintenance.</p></div><span class="pitfall-symbol">↔</span></div><div class="pitfall"><span class="pitfall-no">04</span><div><h3>Not everything belongs in JSONB</h3><p>Keep stable identifiers, constraints, and heavily joined relationships relational.</p></div><span class="pitfall-symbol">⊞</span></div></div>
+      </section>
+
+      <!-- 14 -->
+      <section class="slide slide-quiz" data-title="Quick knowledge check" data-duration="35" aria-label="Slide 14: Quick knowledge check">
+        <div class="slide-meta"><span class="section-num">13 — TEST YOURSELF</span><span class="chapter-label">THREE FAST QUESTIONS</span></div>
+        <h2 class="display-title">The <em>30-second challenge.</em></h2>
+        <div class="quiz-grid"><button type="button" class="quiz-card" data-answer="Use →> to get text, then ::int for numeric comparison."><span class="quiz-top"><span>01 / TYPES</span><span class="quiz-reveal">TAP TO REVEAL ↗</span></span><strong>Which operator returns text: <code>→</code> or <code>→></code>?</strong><span class="quiz-answer"></span></button><button type="button" class="quiz-card" data-answer="No. ? checks top-level keys or string array elements, not arbitrary nested keys."><span class="quiz-top"><span>02 / DEPTH</span><span class="quiz-reveal">TAP TO REVEAL ↗</span></span><strong>Can <code>?</code> find a nested key at any depth?</strong><span class="quiz-answer"></span></button><button type="button" class="quiz-card" data-answer="No. jsonb_path_ops does not support the ? key-existence operator."><span class="quiz-top"><span>03 / INDEXES</span><span class="quiz-reveal">TAP TO REVEAL ↗</span></span><strong>Does <code>jsonb_path_ops</code> accelerate <code>?</code>?</strong><span class="quiz-answer"></span></button></div>
+        <div class="quiz-hint">CLICK ANY CARD TO CHECK THE ANSWER <span>✳</span></div>
+      </section>
+
+      <!-- 15 -->
+      <section class="slide slide-end" data-title="Key takeaways & sources" data-duration="27" aria-label="Slide 15: Key takeaways and sources">
+        <div class="slide-meta"><span class="section-num">14 — CONCLUSION</span><span class="chapter-label">WHAT TO REMEMBER</span></div>
+        <h2 class="end-title">STRUCTURE<br>MEETS <span>FREEDOM.</span></h2>
+        <div class="closing-grid"><div class="closing-left"><div class="closing-point"><span>01</span><p><strong>Store flexibly.</strong> JSONB brings document-oriented data into PostgreSQL.</p></div><div class="closing-point"><span>02</span><p><strong>Query precisely.</strong> Operators, JSONPath, and SQL analytics unlock nested fields.</p></div><div class="closing-point"><span>03</span><p><strong>Measure wisely.</strong> Pick indexes for your real workload and verify with EXPLAIN.</p></div><div class="thankyou">THANK YOU <span class="thank-arrow">↗</span></div></div><div class="sources-panel"><div class="sources-title"><span>REFERENCE DESK</span><span>OFFICIAL SOURCES</span></div><a href="https://www.postgresql.org/docs/current/datatype-json.html" target="_blank" rel="noopener">01 <span>JSON Types & Indexing</span> ↗</a><a href="https://www.postgresql.org/docs/current/functions-json.html" target="_blank" rel="noopener">02 <span>JSON Functions & Operators</span> ↗</a><a href="https://www.postgresql.org/docs/current/indexes-expressional.html" target="_blank" rel="noopener">03 <span>Indexes on Expressions</span> ↗</a><a href="https://www.postgresql.org/docs/current/using-explain.html" target="_blank" rel="noopener">04 <span>Using EXPLAIN</span> ↗</a><div class="source-hint">PostgreSQL Global Development Group · Official Documentation</div></div></div>
+      </section>
+    </main>
+
+    <footer class="bottombar"><div class="nav-left"><span class="slide-count" id="slideCount">01 <span>/ 15</span></span><span class="slide-name" id="slideName">THE BIG IDEA</span></div><div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div><div class="nav-right"><span class="keyboard-hint">← → NAVIGATE <span class="dot-sep">·</span> N NOTES <span class="dot-sep">·</span> G OVERVIEW</span><button type="button" id="prevBtn" class="nav-btn" aria-label="Previous slide">←</button><button type="button" id="nextBtn" class="nav-btn nav-next" aria-label="Next slide">→</button></div></footer>
+  </div>
+  <div class="overview" id="overview" hidden role="dialog" aria-modal="true" aria-labelledby="overviewTitle"><div class="overview-top"><div><p class="eyebrow">THE COMPLETE STORY</p><h2 id="overviewTitle">Slide overview<span class="period">.</span></h2></div><button type="button" id="closeOverview" class="close-btn" aria-label="Close slide overview">✕</button></div><div class="overview-list" id="overviewList"></div><p class="overview-foot">Click a chapter to jump to it · ESC to close</p></div>
+  <aside class="notes-panel" id="notesPanel" hidden aria-label="Presenter notes"><div class="notes-header"><strong>PRESENTER NOTES <span id="noteSlideNumber">01 / 15</span></strong><button id="closeNotes" class="notes-close" type="button">✕</button></div><p id="noteText"></p><div class="notes-footer">Press N to hide · These notes are not shown in exported PDF</div></aside>
+  <div class="toast" id="toast" aria-live="polite"></div>
+  <div class="sr-only" id="announce" aria-live="polite"></div>
+</body>
+</html>
